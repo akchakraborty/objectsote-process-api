@@ -15,7 +15,6 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 		<os:store doc:name="Store" doc:id="15a42529-449b-488d-aeea-1587e1be1051" key="#[payload.key]" objectStore="Object_store">
 			<os:value ><![CDATA[#[payload.value]]]></os:value>
 		</os:store>
-		
 		<logger level="INFO" doc:name="Logger" doc:id="31b3dbcb-6f4f-41e5-ae0e-b85acc771082" message="After data stored in OS. Payload == #[payload]"/>
 	</flow>
 	<flow name="objectstoreFlowRetrieve" doc:id="a90b1b5e-7154-45dd-9863-98e1063112ef" >
