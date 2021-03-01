@@ -39,7 +39,7 @@ http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/cu
 	</flow>
 	<flow name="objectstoreFlowRemove" doc:id="ba9d01c3-ac6f-4d5c-a841-575e81ec165a" >
 		<http:listener doc:name="Listener" doc:id="5f58944d-bbd4-4d2b-a1a5-afaab98aa670" config-ref="HTTP_Listener_config" path="/remove"/>
-		<logger level="INFO" doc:name="Logger" doc:id="d6ae0149-93a9-4a5c-bc2f-71f5c6cd8123" message="Removing data from Object store."/>
+		<logger level="INFO" doc:name="Logger" doc:id="d6ae0149-93a9-4a5c-bc2f-71f5c6cd8123" message="Removing data from Object store. #[payload]"/>
 		<os:remove doc:name="Remove" doc:id="4cba8c19-dfb7-45ae-877e-f783a4957328" key="#[payload.key]" objectStore="Object_store"/>
 		<logger level="INFO" doc:name="Logger" doc:id="8c84dc23-7123-4bce-a995-103f80f02814" message="Payload after removing data from Object store = #[payload]"/>
 	</flow>
