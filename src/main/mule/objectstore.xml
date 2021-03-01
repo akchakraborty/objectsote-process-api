@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="436570eb-d792-46ac-b006-96316206d39a" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="fea842e2-82af-49ff-a90d-d5ceaa98befc"/>
+	<flow name="objectstoreFlowStore" doc:id="4a91021e-adf0-4b60-89a1-e9533466d075" >
+		<http:listener doc:name="Listener" doc:id="1ce0fe78-df59-4599-beb1-50daa9c937c4" config-ref="HTTP_Listener_config" path="/store"/>
+		<logger level="INFO" doc:name="Logger" doc:id="554b939d-871a-4957-bab6-f05a41d03dbc" message="Before data stored in OS. Payload == #[payload]"/>
+		<os:store doc:name="Store" doc:id="15a42529-449b-488d-aeea-1587e1be1051" key="#[payload.key]" objectStore="Object_store">
+			<os:value ><![CDATA[#[payload.value]]]></os:value>
+		</os:store>
+		<logger level="INFO" doc:name="Logger" doc:id="31b3dbcb-6f4f-41e5-ae0e-b85acc771082" message="After data stored in OS. Payload == #[payload]"/>
+	</flow>
+	<flow name="objectstoreFlowRetrieve" doc:id="a90b1b5e-7154-45dd-9863-98e1063112ef" >
+		<http:listener doc:name="Listener" doc:id="b4d0c95e-0f35-47f8-8a70-56a6478fa5fd" config-ref="HTTP_Listener_config" path="/retrieve"/>
+		<logger level="INFO" doc:name="Logger" doc:id="1fe6fb14-224f-4e06-aa97-0244541313c3" message="Retrieving data from object store #[payload]"/>
+		<os:retrieve doc:name="Retrieve" doc:id="3b2145ab-e15e-45c2-81d0-3437d1cdee2b" key="#[payload.key]" objectStore="Object_store">
+			<os:default-value ><![CDATA[Default Value]]></os:default-value>
+		</os:retrieve>
+		<logger level="INFO" doc:name="Logger" doc:id="e342b69a-47ec-4b73-8c5d-70ce8f5b6f3e" message="After retrieve from object store data = #[payload]"/>
+	</flow>
+	<flow name="objectstoreFlowClear" doc:id="d21a1adb-9f0d-4cd7-9f16-d8ab46045e4c" >
+		<http:listener doc:name="Listener" doc:id="a630ee86-4aea-4060-80ed-c0e99592621b" config-ref="HTTP_Listener_config" path="/clear"/>
+		<logger level="INFO" doc:name="Logger" doc:id="1e3b005d-e4a1-4f6e-b1b1-2870ac14f487" message="Clearing Object Sore"/>
+		<os:clear doc:name="Clear" doc:id="a3312927-d211-45af-9f00-6221d01f16c2" objectStore="Object_store"/>
+		<logger level="INFO" doc:name="Logger" doc:id="befbe16b-c10d-47ab-bf4c-faa1486f8124" message="After clearing object store == #[payload]"/>
+	</flow>
+	<flow name="objectstoreFlowContains" doc:id="01b265cc-38ed-409e-ba07-ce7995467abf" >
+		<http:listener doc:name="Listener" doc:id="125c0355-90b8-44fe-a640-8abe3d4530d4" config-ref="HTTP_Listener_config" path="/contains"/>
+		<logger level="INFO" doc:name="Logger" doc:id="978019ff-8137-444e-a8b0-0bcb90463048" message="Check contains in object store."/>
+		<os:contains doc:name="Contains" doc:id="a1e641b1-5d18-4268-8ff7-97576182bbfa" key="#[payload.key]" objectStore="Object_store"/>
+		<logger level="INFO" doc:name="Logger" doc:id="9771e96f-f68f-45f7-9085-386bed454dcc" message="Payload after contains == #[payload]"/>
+	</flow>
+	<flow name="objectstoreFlowRemove" doc:id="ba9d01c3-ac6f-4d5c-a841-575e81ec165a" >
+		<http:listener doc:name="Listener" doc:id="5f58944d-bbd4-4d2b-a1a5-afaab98aa670" config-ref="HTTP_Listener_config" path="/remove"/>
+		<logger level="INFO" doc:name="Logger" doc:id="d6ae0149-93a9-4a5c-bc2f-71f5c6cd8123" message="Removing data from Object store."/>
+		<os:remove doc:name="Remove" doc:id="4cba8c19-dfb7-45ae-877e-f783a4957328" key="#[payload.key]" objectStore="Object_store"/>
+		<logger level="INFO" doc:name="Logger" doc:id="8c84dc23-7123-4bce-a995-103f80f02814" message="Payload after removing data from Object store = #[payload]"/>
+	</flow>
+	<flow name="objectstoreFlowRetrieveAll" doc:id="ee5d7757-9c72-4b1c-a28a-bcd7c64374e4" >
+		<http:listener doc:name="Listener" doc:id="3f0048d4-95b9-4d63-a5b8-0eb1d831d8bf" config-ref="HTTP_Listener_config" path="/retrieveAll"/>
+		<logger level="INFO" doc:name="Logger" doc:id="e98a1c73-8b09-4b0d-95fd-1a1698b0b3f8" message="Before retrieve all payload == #[payload]"/>
+		<os:retrieve-all doc:name="Retrieve all" doc:id="ea195869-b279-4db8-bf53-7ef3712057b2" objectStore="Object_store"/>
+		<foreach doc:name="For Each" doc:id="9a8e210e-0213-4f3f-a514-62602d057093">
+			<logger level="INFO" doc:name="Logger" doc:id="79655685-f941-4d93-b99f-03d8f1af1c02" message="Inside for each == #[payload]" />
+		</foreach>
+		<logger level="INFO" doc:name="Logger" doc:id="b483da63-7bfa-45a4-b67c-acff5178d3d4" message="After retrieve all payload == #[payload]"/>
+	</flow>
+	<flow name="objectstoreFlowRetrieveAllKeys" doc:id="06ed1b15-4f48-4b8a-af68-68458a771d90" >
+		<http:listener doc:name="Listener" doc:id="90748636-4f99-44e1-886a-7b0701ae5f66" config-ref="HTTP_Listener_config" path="/retrieveAllKeys"/>
+		<logger level="INFO" doc:name="Logger" doc:id="0fc56c6c-73e0-45f8-a986-5915549256c8" message="Before retrieving all keys. = #[payload]"/>
+		<os:retrieve-all-keys doc:name="Retrieve all keys" doc:id="342ff089-81be-49f3-b627-81f529397985" objectStore="Object_store"/>
+		<logger level="INFO" doc:name="Logger" doc:id="ddfdf3dd-5999-47f9-874b-e3cd34c8815c" message="After Retrieving all keys == #[payload]" />
+	</flow>
+</mule>
